@@ -1,0 +1,186 @@
+#include "ros/ros.h"
+#include "rc_create/Control.h"
+#include "std_srvs/Empty.h"
+#include "std_msgs/Bool.h"
+#include "std_srvs/Empty.h"
+#include "std_msgs/Float32MultiArray.h"
+
+using namespace std;
+int main(int argc, char **argv)
+{
+        ros::init(argc, argv, "rc_create_controller");
+        ros::NodeHandle node;
+
+	unsigned char ch;
+        // Setup client to exit session.
+        ros::ServiceClient exitClient = node.serviceClient<std_srvs::Empty>("exit");
+
+//        ros::ServiceClient exitClient = node.serviceClient<std_msgs::>("exit");
+
+        /***************************
+         *
+         * SETUP MODE CLIENT HERE.
+         *
+         ***************************/
+
+        ros::ServiceClient modeClient = node.serviceClient<rc_create::Control>("mode");
+
+        std::string mode = "D";
+
+        while(ros::ok())
+        {
+                std::string input;
+
+                // Clear screen.
+                std::cout << "\033[2J\033[1;1H";
+		/*
+                // Print menu.
+                std::cout << "MAIN MENU" << std::endl;
+                std::cout << "---------------------------------" << std::endl;
+                std::cout << "Current mode: " << mode << std::endl;
+                std::cout << "Options:" << std::endl;
+                std::cout << "  M - Enter command" << std::endl;
+                std::cout << "  E - Exit" << std::endl;
+                std::cout << "---------------------------------" << std::endl;
+                std::cout << "Choice: ";
+                std::cin >> input;
+                std::cout << std::endl;
+		*/
+
+               // if (input == "M" || input == "m")
+                {
+                        // Handle the enter mode choice.
+                        // Clear screen.
+                        std::cout << "\033[2J\033[1;1H";
+                        // Print mode menu.
+                        std::cout << "MAIN MENU" << std::endl;
+                        std::cout << "---------------------------------" << std::endl;
+                        std::cout << "Current mode: " << mode << std::endl;
+                        std::cout << "Options:" << std::endl;
+                        std::cout << "  I - MOVE UP" << std::endl;
+                        std::cout << "  K - MOVE DOWN" << std::endl;
+                        std::cout << "  L - MOVE RIGHT" << std::endl;
+			std::cout << "  J - MOVE LEFT" << std::endl;
+			std::cout << "  D - STOP MOTION" << std::endl;
+			std::cout << "  S - PLAY SONG" << std::endl;
+                        std::cout << "  E - Exit" << std::endl;
+                        std::cout << "---------------------------------" << std::endl;
+                        std::cout << "Enter mode: ";
+                        std::cin >> input;
+                        std::cout << std::endl;
+
+                        // Check if the mode is valid.
+
+		
+                        if (input == "I" || input == "i")
+                        {
+                                mode = "I";
+                        }
+                        else if (input == "K" || input == "k")
+                        {
+                                mode = "K";
+                        }
+                        else if (input == "L" || input == "l")
+                        {
+                                mode = "L";
+                        }
+			else if (input == "J" || input == "j")
+                        {
+                                mode = "J";
+                        }
+			else if (input == "S" || input == "s")
+                        {
+                                mode = "S";
+                        }
+		        else if (input == "d" || input == "D")
+                        {
+                                mode = "D";
+                        }
+                        else if (input == "E" || input == "e")
+                        {
+                                std::cout << "Exiting..." << std::endl;
+
+                                // Call exit service.
+                                std_srvs::Empty exitSrv;
+                                exitClient.call(exitSrv);
+
+                                return 0;
+                        }
+                        else
+                        {
+                                std::cout << "'" << input << "' is not a valid mode." << std:: endl;
+                                std::cout << "---------------------------------" << std::endl;
+
+                        /*        // Continue message.
+                                std::cout << "Press any key to continue.";
+                                getchar();
+                                getchar();
+                                continue;
+			*/                        
+			}
+
+                        /********************************
+                         *
+                         * HANDLE SETTING THE MODE HERE.
+                         *
+                         ********************************/
+
+                        // Setup the service request.
+                        rc_create::Control srvMode;
+                        srvMode.request.mode = mode;
+                        std_msgs::Bool a;
+
+                        if (modeClient.call(srvMode))
+                        {
+                                a.data = srvMode.response.success;
+                                std::cout << "Success: " << a << std::endl;
+                        }
+                        else
+                        {
+                                //std::cout << "Success: " << srvMode.response.success << std::endl;
+                                std::cout << "Failed to call service";
+
+                                return 1;
+                        }
+
+
+
+
+
+
+                        std::cout << "Mode set to " << mode << std::endl;
+                        std::cout << "---------------------------------" << std::endl;
+
+                        // Continue message.
+                        /*std::cout << "Press any key to continue.";
+                        getchar();
+                        getchar();
+                        continue;
+			*/
+                }
+               /* else if (input == "E" || input == "e")
+                {
+                        std::cout << "Exiting..." << std::endl;
+
+                        // Call exit service.
+                        std_srvs::Empty exitSrv;
+                        exitClient.call(exitSrv);
+
+                        return 0;
+                }
+                else
+                {
+                        std::cout << "'" << input << "' is not a valid choice." << std:: endl;
+                        std::cout << "---------------------------------" << std::endl;
+
+                        // Continue message.
+                        std::cout << "Press any key to continue.";
+                        getchar();
+                        getchar();
+                        continue;
+                }*/
+        }
+
+        return 0;
+}
+

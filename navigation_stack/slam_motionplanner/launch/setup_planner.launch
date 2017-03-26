@@ -1,0 +1,11 @@
+<launch>
+    <remap from="map" to="/rtabmap/proj_map" />
+    <remap from="scan" to="/kinect_scan" />
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true" launch-prefix="xterm -e">
+    	<rosparam file="$(find robot_setup_tf)/config/costmap_common_params.yaml" 	command="load" 	ns="global_costmap" />
+    	<rosparam file="$(find robot_setup_tf)/config/costmap_common_params.yaml" 	command="load" 	ns="local_costmap" />
+    	<rosparam file="$(find robot_setup_tf)/config/local_costmap_params.yaml" 	command="load" />
+    	<rosparam file="$(find robot_setup_tf)/config/global_costmap_params.yaml" 	command="load" />
+    	<rosparam file="$(find robot_setup_tf)/config/base_local_planner_params.yaml" 	command="load" />
+  	</node>
+</launch>

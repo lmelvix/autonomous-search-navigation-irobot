@@ -1,0 +1,30 @@
+<launch>
+
+  <!-- Launch the motion detector node for image processing. -->
+  <!-- Launch the motion detector keyboard for user input. -->
+  <!-- Use launch-prefix to launch this node in a separate window. -->
+  <!-- Launch the driver node for our usb camera. -->
+  <!-- Launch the image view to display the video. -->
+  
+  <!-- Launch the driver node for our usb camera. -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+ 
+  <!-- Launch the image view to display the video. -->
+  <node pkg="image_view" type="image_view" name="image_view" output="screen">
+  <!-- Set the window name. -->
+    <param name="window_name" value="Webcam Test" />
+
+    <!-- Remap from default image topic to the topic provided by usb_cam. -->
+    <remap from="/image" to="/image_converter/output_video"/>
+  </node>
+  <!--<node pkg="motion_detector" name="motion_detector_node" type="motion_detector_node" output="screen" /> -->
+  <node pkg="motion_detector" name="motion" type="motion" output="screen" />
+</launch>
